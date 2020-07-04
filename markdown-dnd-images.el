@@ -5,7 +5,7 @@
 ;; Instead of
 ;;   x/images_for_Users_moorer_Documents_test.md/
 ;; files are stored in
-;;   x/YYYY/MM/Documents_test/
+;;   x/YYYY/MM/test/
 ;; where x is set by dnd-save-directory
 ;; and YYYY and MM are year and month
 ;;
