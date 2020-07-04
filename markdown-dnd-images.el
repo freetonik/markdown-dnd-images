@@ -1,5 +1,21 @@
 ;;; markdown-dnd-images.el --- Drag and drop images into markdown-mode
 
+;; ===================================================
+;; This fork changes the path where images are stored.
+;; Instead of
+;;   x/images_for_Users_moorer_Documents_test.md/
+;; files are stored in
+;;   x/YYYY/MM/Documents_test/
+;; where x is set by dnd-save-directory
+;; and YYYY and MM are year and month
+;;
+;; In addition, Markdown images are now formatted as
+;; ![](path/to/file)
+;; instead of
+;; ![path/to/file](path/to/file)
+;; ===================================================
+;; BELOW IS THE ORIGINAL DESCRIPTION
+
 ;; Copyright 2015 Ryan Moore
 
 ;; Author: Ryan Moore <moorer@udel.edu>
@@ -80,8 +96,7 @@
   `((,(purecopy "^file:///")  . dnd-open-local-file)	; XDND format.
     (,(purecopy "^file://")   . dnd-open-file)		; URL with host
     (,(purecopy "^file:")     . dnd-open-local-file)	; Old KDE, Motif, Sun
-    (,(purecopy "^\\(https?\\|ftp\\|file\\|nfs\\)://") . dnd-open-file)
-   )
+    (,(purecopy "^\\(https?\\|ftp\\|file\\|nfs\\)://") . dnd-open-file))
 
   "The functions to call for different protocols when a drop is made.
 This variable is used by `dnd-handle-one-url' and
@@ -123,7 +138,7 @@ MS-Windows."
   :type 'boolean
   :group 'markdown-dnd)
 
-(defcustom dnd-save-directory "~/.emacs.d/markdown_image_files/images_for"
+(defcustom dnd-save-directory "~/.emacs.d/markdown_image_files/"
   "Image save directory. Precede with ~ for home. Nothing for relative to buffer file."
   :type '(string)
   :group 'markdown-dnd)
@@ -153,8 +168,7 @@ MS-Windows."
 
 ;; If images viewed inline, markdown-mode required.
 (if dnd-view-inline
-  (require 'markdown-mode)
-)
+  (require 'markdown-mode))
 
 ;; TODO update this one
 (defun dnd-handle-one-url (window action url)
@@ -301,18 +315,14 @@ happened."
 	  "The dropped text can be accessed with \\[yank]")))
     (insert text))
   action)
-            
+
 (defun dnd-insert-image-tag (text)
-  (insert (format "![%s](%s)" text text ))
+  (insert (format "![](%s)" text ))
   (if dnd-capture-source
     (insert (format "\n\n\x2ASource: %s; Accessed: %s\x2A" url (current-time-string) ))
   )
-  (if dnd-view-inline
-    (markdown-display-inline-images)
-  )
-  )
+  (if dnd-view-inline (markdown-display-inline-images)))
 
-;; slahes and spaces in the path are turned to _
 (defun markdown-img-dir-path ()
   (if (not buffer-file-name)
       (error (concat "ERROR: Couldn't find buffer-file-name "
@@ -321,9 +331,7 @@ happened."
    (expand-file-name
     (concat dnd-save-directory
     (if dnd-save-buffer-name
-    (replace-regexp-in-string "[/ ]+" "_" buffer-file-name)
-    )   
-            ))))
+        (concat (format-time-string "%Y/%m/") (file-name-base buffer-file-name)))))))
 
 ;; returns name of dir created
 (defun dnd-try-mkdir (dir)
@@ -363,8 +371,7 @@ happened."
     (condition-case nil
         (url-copy-file uri new-fname)
       (setq new-fname uri))
-    new-fname)
-    )
+    new-fname))
 
 (provide 'markdown-dnd-images)
 
