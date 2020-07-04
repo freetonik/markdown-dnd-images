@@ -1,5 +1,24 @@
 # markdown-dnd-images.el #
 
+## FORK DESCRIPTION
+
+This fork changes the path where images are stored. Instead of
+
+```
+x/images_for_Users_moorer_Documents_test.md/
+```
+
+files are stored in
+
+```
+x/YYYY/MM/test/
+```
+
+where x is set by dnd-save-directory and YYYY and MM are year and month.
+
+In addition, Markdown images are now formatted as `![](path/to/file)` instead of `![path/to/file](path/to/file)`.
+
+
 ## Overview ##
 
 Drag and drop files from your systems file manager onto your
